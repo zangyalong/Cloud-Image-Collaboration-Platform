@@ -8,7 +8,7 @@ spring:
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mingzang_picture
+    url: jdbc:mysql://localhost:3306/mz_picture?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: z200209255
 mybatis-plus:
@@ -34,5 +34,5 @@ knife4j:
         api-rule: package
         # 规则资源：指定要扫描的包路径
         api-rule-resources:
-          - com.yupi.yupicturebackend.controller
+          - com.zangyalong.mingzangpicturebackend.controller
 

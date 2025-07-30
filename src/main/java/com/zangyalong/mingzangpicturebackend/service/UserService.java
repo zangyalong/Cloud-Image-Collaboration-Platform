@@ -1,9 +1,14 @@
 package com.zangyalong.mingzangpicturebackend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zangyalong.mingzangpicturebackend.model.dto.user.UserQueryRequest;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.vo.LoginUserVO;
+import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 /**
 * @author mingzang
@@ -12,6 +17,13 @@ import jakarta.servlet.http.HttpServletRequest;
 */
 public interface UserService extends IService<User> {
 
+    LoginUserVO getLoginUserVo(User loginUser);
+    UserVO getUserVO(User user);
+    List<UserVO> getUserVOList(List<User> userList);
+
+    QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    String getEncryptPassword(String userPassword);
     /**
      * 用户注册
      *
@@ -41,7 +53,7 @@ public interface UserService extends IService<User> {
      */
     User getLoginUser(HttpServletRequest request);
 
-    LoginUserVO getLoginUserVo(User loginUser);
+
 
     /**
      * 用户注销

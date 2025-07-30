@@ -1,13 +1,17 @@
 package com.zangyalong.mingzangpicturebackend.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
+import com.zangyalong.mingzangpicturebackend.model.dto.user.UserQueryRequest;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.enums.UserRoleEnum;
 import com.zangyalong.mingzangpicturebackend.model.vo.LoginUserVO;
+import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
 import com.zangyalong.mingzangpicturebackend.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.zangyalong.mingzangpicturebackend.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -104,6 +112,48 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    public UserVO getUserVO(User user) {
+        if (user == null) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user, userVO);
+        return userVO;
+    }
+
+    @Override
+    public List<UserVO> getUserVOList(List<User> userList) {
+        if (CollUtil.isEmpty(userList)) {
+            return new ArrayList<>();
+        }
+        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
+    }
+
+    @Override
+    public QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
+        if(userQueryRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+        }
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        Long id = userQueryRequest.getId();
+        String userAccount = userQueryRequest.getUserAccount();
+        String userName = userQueryRequest.getUserName();
+        String userProfile = userQueryRequest.getUserProfile();
+        String userRole = userQueryRequest.getUserRole();
+        String sortField = userQueryRequest.getSortField();
+        String sortOrder = userQueryRequest.getSortOrder();
+        queryWrapper.eq(ObjUtil.isNotNull(id),"id", id);
+        queryWrapper.eq(StrUtil.isNotBlank(userAccount),"userAccount", userAccount);
+        queryWrapper.eq(StrUtil.isNotBlank(userName),"userName", userName);
+        queryWrapper.eq(StrUtil.isNotBlank(userProfile),"userProfile", userProfile);
+        queryWrapper.eq(StrUtil.isNotBlank(userRole),"userRole", userRole);
+        queryWrapper.eq(StrUtil.isNotBlank(sortField),"sortField", sortField);
+        queryWrapper.orderBy(StrUtil.isNotBlank(sortOrder), sortOrder.equals("ascend"), sortField);
+
+        return queryWrapper;
+    }
+
+    @Override
     public boolean userLogout(HttpServletRequest request) {
         // 先判断是否已登录
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
@@ -132,8 +182,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return currentUser;
     }
 
-
-    private String getEncryptPassword(String userPassword) {
+    @Override
+    public String getEncryptPassword(String userPassword) {
         // 盐值，混淆密码
         final String SALT = "mingzang";
         return DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());

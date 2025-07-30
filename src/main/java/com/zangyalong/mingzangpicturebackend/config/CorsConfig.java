@@ -1,4 +1,4 @@
-package com.zangyalong.mingzangpicturebackend.mapper;
+package com.zangyalong.mingzangpicturebackend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

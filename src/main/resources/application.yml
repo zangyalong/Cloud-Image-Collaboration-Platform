@@ -5,6 +5,12 @@ server:
 spring:
   application:
     name: mingzang-picture-backend
+  profiles:
+    active: local
+  servlet:
+    multipart:
+      max-file-size: 10MB        # 单个文件最大50MB
+
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

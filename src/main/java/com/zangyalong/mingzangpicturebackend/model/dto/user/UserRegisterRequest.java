@@ -2,9 +2,13 @@ package com.zangyalong.mingzangpicturebackend.model.dto.user;
 
 import lombok.Data;
 
-@Data
-public class UserRegisterRequest {
+import java.io.Serial;
+import java.io.Serializable;
 
+@Data
+public class UserRegisterRequest implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 3191241716373120793L;
 
     /**

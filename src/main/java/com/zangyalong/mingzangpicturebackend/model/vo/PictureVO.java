@@ -5,6 +5,7 @@ import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -92,6 +93,7 @@ public class PictureVO implements Serializable {
      */
     private UserVO user;
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

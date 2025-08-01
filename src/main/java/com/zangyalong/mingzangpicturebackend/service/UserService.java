@@ -24,6 +24,15 @@ public interface UserService extends IService<User> {
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
     String getEncryptPassword(String userPassword);
+
+    /**
+     * 是否为管理员
+     *
+     * @param user
+     * @return
+     */
+    boolean isAdmin(User user);
+
     /**
      * 用户注册
      *

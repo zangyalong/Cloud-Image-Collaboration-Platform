@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zangyalong.mingzangpicturebackend.common.BaseResponse;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.PictureQueryRequest;
+import com.zangyalong.mingzangpicturebackend.model.dto.picture.PictureReviewRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.PictureUpdateRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.PictureUploadRequest;
 import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
@@ -39,6 +40,8 @@ public interface PictureService extends IService<Picture> {
 
     PictureVO getPictureVO(Picture picture, HttpServletRequest request);
 
+    void fillReviewParams(Picture picture, User loginUser);
+
     /**
      * 分页获取图片封装
      */
@@ -50,5 +53,13 @@ public interface PictureService extends IService<Picture> {
      * @param picture
      */
     void validPicture(Picture picture);
+
+    /**
+     * 图片审核
+     *
+     * @param pictureReviewRequest
+     * @param loginUser
+     */
+    void doPictureReview(PictureReviewRequest pictureReviewRequest, User loginUser);
 
 }

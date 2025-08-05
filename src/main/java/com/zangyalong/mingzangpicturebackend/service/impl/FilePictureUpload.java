@@ -1,12 +1,9 @@
-package com.zangyalong.mingzangpicturebackend.service;
+package com.zangyalong.mingzangpicturebackend.service.impl;
 
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.NumberUtil;
-import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
 import com.zangyalong.mingzangpicturebackend.manager.upload.PictureUploadTemplate;
-import com.zangyalong.mingzangpicturebackend.model.dto.file.UploadPictureResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

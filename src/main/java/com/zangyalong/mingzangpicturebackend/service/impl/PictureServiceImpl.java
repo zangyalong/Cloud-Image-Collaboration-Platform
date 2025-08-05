@@ -15,6 +15,7 @@ import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
 import com.zangyalong.mingzangpicturebackend.manager.FileManager;
+import com.zangyalong.mingzangpicturebackend.manager.upload.PictureUploadTemplate;
 import com.zangyalong.mingzangpicturebackend.model.dto.file.UploadPictureResult;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.*;
 import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
@@ -22,8 +23,10 @@ import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.enums.PictureReviewStatusEnum;
 import com.zangyalong.mingzangpicturebackend.model.vo.PictureVO;
 import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
+import com.zangyalong.mingzangpicturebackend.service.FilePictureUpload;
 import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.mapper.PictureMapper;
+import com.zangyalong.mingzangpicturebackend.service.UrlPictureUpload;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,17 +49,26 @@ import java.util.stream.Collectors;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
     implements PictureService{
 
-    private final FileManager fileManager;
+
+    @Resource
+    private FilePictureUpload filePictureUpload;
+
+    @Resource
+    private UrlPictureUpload urlPictureUpload;
 
     @Resource
     private UserService userService;
 
-    public PictureServiceImpl(FileManager fileManager) {
-        this.fileManager = fileManager;
-    }
+//  private final FileManager fileManager;
+//    public PictureServiceImpl(FileManager fileManager) {
+//        this.fileManager = fileManager;
+//    }
 
     @Override
-    public PictureVO uploadPicture(MultipartFile multipartFile, PictureUploadRequest pictureUploadRequest, User loginUser) {
+    public PictureVO uploadPicture(/*MultipartFile multipartFile*/Object inputSource, PictureUploadRequest pictureUploadRequest, User loginUser) {
+        if (inputSource == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "图片为空");
+        }
         ThrowUtils.throwIf(loginUser == null, ErrorCode.NO_AUTH_ERROR);
 
         Long pictureId = null;
@@ -74,7 +86,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
         }
 
         String uploadPathPrefix = String.format("public/%s", loginUser.getId());
-        UploadPictureResult uploadPictureResult = fileManager.uploadPicture(multipartFile, uploadPathPrefix);
+        // 新增：模板类，通过模板类实现一个函数上传两种不同文件参数
+        // 根据 inputSource 类型区分上传方式
+        PictureUploadTemplate pictureUploadTemplate = filePictureUpload;
+        if (inputSource instanceof String) {
+            pictureUploadTemplate = urlPictureUpload;
+        }
+        UploadPictureResult uploadPictureResult = pictureUploadTemplate.uploadPicture(inputSource, uploadPathPrefix);
 
         Picture picture = new Picture();
         picture.setUrl(uploadPictureResult.getUrl());

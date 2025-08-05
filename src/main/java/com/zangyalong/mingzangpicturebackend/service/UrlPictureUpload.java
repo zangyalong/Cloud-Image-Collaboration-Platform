@@ -92,31 +92,7 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         HttpUtil.downloadFile(fileUrl, file);
     }
 
-    @Override
-    protected UploadPictureResult buildResult(String originFileName, File file, String uploadPath, ImageInfo imageInfo) {
-        UploadPictureResult uploadPictureResult =  new UploadPictureResult();
-        int picWidth = imageInfo.getWidth();
-        int picHeight = imageInfo.getHeight();
-        double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
 
-        uploadPictureResult.setPicName(FileUtil.mainName(originFileName));
-        uploadPictureResult.setPicFormat(imageInfo.getFormat());
-        uploadPictureResult.setPicWidth(picWidth);
-        uploadPictureResult.setPicHeight(picHeight);
-        uploadPictureResult.setPicScale(picScale);
-        uploadPictureResult.setPicSize(FileUtil.size(file));
-        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
-        return uploadPictureResult;
-    }
 
-    @Override
-    protected void deleteTempFile(File file) {
-        if(file == null){
-            return;
-        }
-        boolean delete = file.delete();
-        if(!delete){
-            log.error("file delete error, filepath = {}", file.getAbsolutePath());
-        }
-    }
+
 }

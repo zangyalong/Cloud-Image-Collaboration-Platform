@@ -2,6 +2,7 @@ package com.zangyalong.mingzangpicturebackend.manager.upload;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.ImageInfo;
@@ -81,10 +82,31 @@ public abstract class PictureUploadTemplate {
     /**
      * 封装返回结果
      */
-    protected abstract UploadPictureResult buildResult(String originFileName, File file, String uploadPath, ImageInfo imageInfo);
+    public UploadPictureResult buildResult(String originFileName, File file, String uploadPath, ImageInfo imageInfo){
+        UploadPictureResult uploadPictureResult = new UploadPictureResult();
+        int picWidth = imageInfo.getWidth();
+        int picHeight = imageInfo.getHeight();
+        double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+        uploadPictureResult.setPicName(FileUtil.mainName(originFileName));
+        uploadPictureResult.setPicWidth(picWidth);
+        uploadPictureResult.setPicHeight(picHeight);
+        uploadPictureResult.setPicScale(picScale);
+        uploadPictureResult.setPicFormat(imageInfo.getFormat());
+        uploadPictureResult.setPicSize(FileUtil.size(file));
+        uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+        return uploadPictureResult;
+    }
 
     /**
      * 删除临时文件
      */
-    protected abstract void deleteTempFile(File file);
+    public void deleteTempFile(File file){
+        if (file == null) {
+            return;
+        }
+        boolean deleteResult = file.delete();
+        if (!deleteResult) {
+            log.error("file delete error, filepath = {}", file.getAbsolutePath());
+        }
+    }
 }

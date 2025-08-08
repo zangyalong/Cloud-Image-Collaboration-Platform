@@ -61,5 +61,25 @@ public class CosManager {
         return cosClient.putObject(putObjectRequest);
     }
 
+    /**
+     * 上传对象（附带图片信息，但禁用自动格式转换）
+     *
+     * @param key  唯一键
+     * @param file 文件
+     */
+    public PutObjectResult putPictureObjectWithoutConversion(String key, File file) {
+        PutObjectRequest putObjectRequest = new PutObjectRequest(cosClientConfig.getBucket(), key,
+                file);
+        // 对图片进行处理（获取基本信息也被视作为一种处理）
+        PicOperations picOperations = new PicOperations();
+        // 1 表示返回原图信息
+        picOperations.setIsPicInfo(1);
+        // 禁用自动格式转换和压缩
+        picOperations.setRules("[]"); // 空的规则数组表示不进行任何转换
+        // 构造处理参数
+        putObjectRequest.setPicOperations(picOperations);
+        return cosClient.putObject(putObjectRequest);
+    }
+
 }
 

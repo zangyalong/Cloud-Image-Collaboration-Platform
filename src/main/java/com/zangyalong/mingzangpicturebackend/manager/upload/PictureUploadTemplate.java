@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import javax.imageio.ImageIO;
 
 @Slf4j
 public abstract class PictureUploadTemplate {
@@ -49,12 +50,11 @@ public abstract class PictureUploadTemplate {
             // 处理文件来源，本地或者URL
             processFile(inputSource, file);
 
-            // 4.上传图片到对象存储
-            PutObjectResult putObjectResult = cosManager.putPictureObject(uploadPath, file);
-            ImageInfo imageInfo = putObjectResult.getCiUploadResult().getOriginalInfo().getImageInfo();
-
-            // 5.封装返回结果
-            return buildResult(originFileName, file, uploadPath, imageInfo);
+            // 4.上传图片到对象存储 - 使用普通上传而不是图片处理上传
+            PutObjectResult putObjectResult = cosManager.putObject(uploadPath, file);
+            
+            // 5.封装返回结果 - 使用本地图片信息
+            return buildResultWithLocalInfo(originFileName, file, uploadPath);
         } catch (Exception  e) {
             log.error("图片上传到对象存储失败", e);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "上传失败");
@@ -78,6 +78,42 @@ public abstract class PictureUploadTemplate {
      * 处理输入源并生成本地临时文件
      */
     protected abstract void processFile(Object inputSource, File file) throws IOException;
+
+    /**
+     * 使用本地图片信息封装返回结果
+     */
+    protected UploadPictureResult buildResultWithLocalInfo(String originFileName, File file, String uploadPath) {
+        try {
+            // 使用Java自带的图片处理类获取图片信息
+            java.awt.image.BufferedImage bufferedImage = javax.imageio.ImageIO.read(file);
+            if (bufferedImage == null) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "无法读取图片文件");
+            }
+            
+            UploadPictureResult uploadPictureResult = new UploadPictureResult();
+            int picWidth = bufferedImage.getWidth();
+            int picHeight = bufferedImage.getHeight();
+            double picScale = NumberUtil.round(picWidth * 1.0 / picHeight, 2).doubleValue();
+            
+            uploadPictureResult.setPicName(FileUtil.mainName(originFileName));
+            uploadPictureResult.setPicWidth(picWidth);
+            uploadPictureResult.setPicHeight(picHeight);
+            uploadPictureResult.setPicScale(picScale);
+            
+            // 从文件名获取格式
+            String fileName = file.getName();
+            String format = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+            uploadPictureResult.setPicFormat(format);
+            
+            uploadPictureResult.setPicSize(FileUtil.size(file));
+            uploadPictureResult.setUrl(cosClientConfig.getHost() + "/" + uploadPath);
+            
+            return uploadPictureResult;
+        } catch (Exception e) {
+            log.error("获取图片信息失败", e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "获取图片信息失败");
+        }
+    }
 
     /**
      * 封装返回结果

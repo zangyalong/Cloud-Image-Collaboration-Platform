@@ -147,8 +147,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         queryWrapper.eq(StrUtil.isNotBlank(userName),"userName", userName);
         queryWrapper.eq(StrUtil.isNotBlank(userProfile),"userProfile", userProfile);
         queryWrapper.eq(StrUtil.isNotBlank(userRole),"userRole", userRole);
-        queryWrapper.eq(StrUtil.isNotBlank(sortField),"sortField", sortField);
-        queryWrapper.orderBy(StrUtil.isNotBlank(sortOrder), sortOrder.equals("ascend"), sortField);
+        //queryWrapper.eq(StrUtil.isNotBlank(sortField),"sortField", sortField);
+        queryWrapper.orderBy(StrUtil.isNotBlank(sortField), sortOrder != null && sortOrder.equals("ascend"), sortField);
 
         return queryWrapper;
     }

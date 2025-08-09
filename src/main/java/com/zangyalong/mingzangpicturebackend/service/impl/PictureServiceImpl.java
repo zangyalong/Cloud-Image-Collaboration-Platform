@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
+import com.zangyalong.mingzangpicturebackend.manager.CosManager;
 import com.zangyalong.mingzangpicturebackend.manager.upload.PictureUploadTemplate;
 import com.zangyalong.mingzangpicturebackend.model.dto.file.UploadPictureResult;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.*;
@@ -28,9 +29,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +57,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private CosManager cosManager;
 
 //  private final FileManager fileManager;
 //    public PictureServiceImpl(FileManager fileManager) {
@@ -340,6 +347,27 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
             }
         }
         return uploadCount;
+    }
+
+    @Async
+    @Override
+    public void clearPictureFile(Picture oldPicture) throws MalformedURLException {
+        //判断该图片是否被多调记录使用
+        String pictureUrl = oldPicture.getUrl();
+        long count = this.lambdaQuery()
+                .eq(Picture::getUrl, pictureUrl)
+                .count();
+        if(count > 1){
+            return;
+        }
+        // 注意，这里的 url 包含了域名，实际上只要传 key 值（存储路径）就够了
+        URL url = new URL(pictureUrl);
+        cosManager.deleteObj(url.getPath());
+        String thumbnailUrl = oldPicture.getThumbnailUrl();
+        URL url2 = new URL(thumbnailUrl);
+        if(StrUtil.isNotBlank(thumbnailUrl)){
+            cosManager.deleteObj(url2.getPath());
+        }
     }
 
 

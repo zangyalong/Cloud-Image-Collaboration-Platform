@@ -9,9 +9,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.vo.PictureVO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 /**
@@ -70,4 +72,14 @@ public interface PictureService extends IService<Picture> {
             PictureUploadByBatchRequest pictureUploadByBatchRequest,
             User loginUser
     );
+
+    /**
+     * 图片清理
+     * @param oldPicture
+     */
+    public void clearPictureFile(Picture oldPicture) throws MalformedURLException;
+
+    /**
+     * Todo Spr؜ing Scheduler 定时任务实现定时清理图片
+     */
 }

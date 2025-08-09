@@ -39,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -163,7 +164,7 @@ public class PictureController {
      * 删除图片
      */
     @PostMapping("/delete")
-    public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+    public BaseResponse<Boolean> deletePicture(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) throws MalformedURLException {
         if(deleteRequest == null || deleteRequest.getId() <= 0){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -178,7 +179,11 @@ public class PictureController {
         }
 
         boolean result = pictureService.removeById(id);
-        ThrowUtils.throwIf(result, ErrorCode.OPERATION_ERROR);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+
+        // 删除COS端数据存储
+        pictureService.clearPictureFile(oldPicture);
+
         return ResultUtils.success(true);
     }
 
@@ -248,7 +253,7 @@ public class PictureController {
     @PostMapping("/list/page")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
     public BaseResponse<Page<Picture>> listPictureByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
-        long current = pictureQueryRequest.getCurrentPage();
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 查询数据库
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
@@ -262,7 +267,7 @@ public class PictureController {
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                              HttpServletRequest request) {
-        long current = pictureQueryRequest.getCurrentPage();
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
@@ -347,7 +352,7 @@ public class PictureController {
     @PostMapping("/list/page/vo/cache")
     public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCache(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                                       HttpServletRequest request){
-        long current = pictureQueryRequest.getCurrentPage();
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
 
         //限制爬虫
@@ -388,7 +393,7 @@ public class PictureController {
     @PostMapping("/list/page/vo/caffeine")
     public BaseResponse<Page<PictureVO>> listPictureVOByPageWithCaffeine(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                                          HttpServletRequest request){
-        long current = pictureQueryRequest.getCurrentPage();
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
 
         String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);
@@ -416,7 +421,7 @@ public class PictureController {
     @PostMapping("/list/page/vo/mixcache")
     public BaseResponse<Page<PictureVO>> listPictureVOByPageWithMixCache(@RequestBody PictureQueryRequest pictureQueryRequest,
                                                                          HttpServletRequest request){
-        long current = pictureQueryRequest.getCurrentPage();
+        long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
 
         String queryCondition = JSONUtil.toJsonStr(pictureQueryRequest);

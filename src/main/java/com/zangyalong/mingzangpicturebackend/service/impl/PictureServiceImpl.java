@@ -91,6 +91,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
         Picture picture = new Picture();
         picture.setUrl(uploadPictureResult.getUrl());
+        // 获取缩略图Url设置到图片属性种，传入数据库
+        picture.setThumbnailUrl(uploadPictureResult.getThumbnailUrl());
 
         // 而不是完全依赖于解析的结果
         picture.setName(uploadPictureResult.getPicName());

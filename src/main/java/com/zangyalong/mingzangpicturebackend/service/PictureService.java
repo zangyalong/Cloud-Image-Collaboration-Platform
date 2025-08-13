@@ -80,6 +80,26 @@ public interface PictureService extends IService<Picture> {
     public void clearPictureFile(Picture oldPicture) throws MalformedURLException;
 
     /**
+     * 检验图片权限（编辑和删除权限）
+     * @param loginUser
+     * @param picture
+     */
+    public void checkPictureAuth(User loginUser, Picture picture);
+
+    /**
+     * 删除图片
+     * @param pictureId
+     * @param loginUser
+     */
+    public void deletePicture(long pictureId, User loginUser) throws MalformedURLException;
+
+    /**
+     * 编辑图片
+     * @param pictureEditRequest
+     * @param loginUser
+     */
+    public void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
+    /**
      * Todo Spr؜ing Scheduler 定时任务实现定时清理图片
      */
 }

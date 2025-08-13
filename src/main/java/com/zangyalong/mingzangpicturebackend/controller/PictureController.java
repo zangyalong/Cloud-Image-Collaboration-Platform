@@ -20,10 +20,12 @@ import com.zangyalong.mingzangpicturebackend.manager.CosManager;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.*;
 import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
 import com.zangyalong.mingzangpicturebackend.model.entity.PictureTagCategory;
+import com.zangyalong.mingzangpicturebackend.model.entity.Space;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.enums.PictureReviewStatusEnum;
 import com.zangyalong.mingzangpicturebackend.model.vo.PictureVO;
 import com.zangyalong.mingzangpicturebackend.service.PictureService;
+import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +62,10 @@ public class PictureController {
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
+    // 空间模块新增
+    @Resource
+    private SpaceService spaceService;
 
     public PictureController(CosManager cosManager) {
         this.cosManager = cosManager;
@@ -178,11 +184,7 @@ public class PictureController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
-        boolean result = pictureService.removeById(id);
-        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-
-        // 删除COS端数据存储
-        pictureService.clearPictureFile(oldPicture);
+        pictureService.deletePicture(id, loginUser);
 
         return ResultUtils.success(true);
     }
@@ -243,6 +245,14 @@ public class PictureController {
         // 查询数据库
         Picture picture = pictureService.getById(id);
         ThrowUtils.throwIf(picture == null, ErrorCode.NOT_FOUND_ERROR);
+
+        // 空间模块新增： 空间权限校验
+        Long spaceId = picture.getSpaceId();
+        if (spaceId != null) {
+            User loginUser = userService.getLoginUser(request);
+            pictureService.checkPictureAuth(loginUser, picture);
+        }
+
         // 获取封装类
         return ResultUtils.success(pictureService.getPictureVO(picture, request));
     }
@@ -273,8 +283,21 @@ public class PictureController {
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         // 查询数据库
 
+        // 空间模块新增： 空间权限校验
+        Long spaceId = pictureQueryRequest.getSpaceId();
+        if(spaceId == null){
+            pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
+            pictureQueryRequest.setNullSpaceId(true);
+        } else {
+            User loginUser = userService.getLoginUser(request);
+            Space space = spaceService.getById(spaceId);
+            ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+            if (!loginUser.getId().equals(space.getUserId())) {
+                throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "没有空间权限");
+            }
+        }
         // 普通用户默认只能查看已过审的数据
-        pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
+        //pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
 
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));

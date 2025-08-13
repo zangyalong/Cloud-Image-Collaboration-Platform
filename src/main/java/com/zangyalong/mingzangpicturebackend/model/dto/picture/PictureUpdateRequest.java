@@ -35,7 +35,6 @@ public class PictureUpdateRequest implements Serializable {
      * 标签
      */
     private List<String> tags;
-
     @Serial
     private static final long serialVersionUID = 1L;
 }

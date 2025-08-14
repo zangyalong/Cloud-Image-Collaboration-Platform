@@ -98,6 +98,7 @@ public interface PictureService extends IService<Picture> {
      * @param pictureEditRequest
      * @param loginUser
      */
+
     public void editPicture(PictureEditRequest pictureEditRequest, User loginUser);
     /**
      * Todo Spr؜ing Scheduler 定时任务实现定时清理图片

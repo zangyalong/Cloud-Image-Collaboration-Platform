@@ -1,9 +1,15 @@
 package com.zangyalong.mingzangpicturebackend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zangyalong.mingzangpicturebackend.model.dto.picture.PictureQueryRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceAddRequest;
+import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceQueryRequest;
+import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
 import com.zangyalong.mingzangpicturebackend.model.entity.Space;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
+import com.zangyalong.mingzangpicturebackend.model.vo.SpaceVO;
 
 /**
 * @author mingzang
@@ -17,4 +23,11 @@ public interface SpaceService extends IService<Space> {
     public void fillSpaceBySpaceLevel(Space space);
 
     public long addSpace(SpaceAddRequest spaceAddRequest, User loginUser);
+
+    boolean deleteSpace(Long id, User loginUser);
+
+    QueryWrapper<Space> getQueryWrapper(SpaceQueryRequest spaceQueryRequest);
+
+    Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage);
+
 }

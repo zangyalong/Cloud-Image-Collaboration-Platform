@@ -2,6 +2,8 @@ package com.zangyalong.mingzangpicturebackend.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
@@ -11,7 +13,7 @@ import lombok.Data;
  */
 @TableName(value ="space")
 @Data
-public class Space {
+public class Space implements Serializable {
     /**
      * id
      */
@@ -74,6 +76,7 @@ public class Space {
     @TableLogic
     private Integer isDelete;
 
+    @Serial
     @TableField
     private static final long serialVersionUID = 1L;
 }

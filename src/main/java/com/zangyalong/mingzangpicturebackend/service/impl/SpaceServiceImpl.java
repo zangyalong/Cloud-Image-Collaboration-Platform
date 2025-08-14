@@ -1,24 +1,41 @@
 package com.zangyalong.mingzangpicturebackend.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qcloud.cos.utils.CollectionUtils;
+import com.qcloud.cos.utils.StringUtils;
 import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
+import com.zangyalong.mingzangpicturebackend.manager.CosManager;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceAddRequest;
+import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceQueryRequest;
+import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
 import com.zangyalong.mingzangpicturebackend.model.entity.Space;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.enums.SpaceLevelEnum;
+import com.zangyalong.mingzangpicturebackend.model.vo.SpaceVO;
+import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.mapper.SpaceMapper;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * @author mingzang
@@ -33,6 +50,13 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     private TransactionTemplate transactionTemplate;
     @Autowired
     private UserService userService;
+
+    @Lazy
+    @Resource
+    private PictureService pictureService;
+
+    @Resource
+    private CosManager cosManager;
 
     @Override
     public void validSpace(Space space, boolean add) {
@@ -107,6 +131,83 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
             });
             return Optional.ofNullable(newSpaceId).orElse(-1L);
         }
+    }
+
+    @Override
+    public boolean deleteSpace(Long id, User loginUser) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR, "要删除的空间不存在");
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR, "未登录");
+
+        QueryWrapper<Picture> pictureQueryWrapper = new QueryWrapper<>();
+        pictureQueryWrapper.eq("spaceId", id);
+        List<Picture> pictureList = pictureService.list(pictureQueryWrapper);
+
+        if(CollUtil.isEmpty(pictureList)){
+            return this.removeById(id);
+        }
+
+        List<String> picturePathList = pictureList.stream()
+                .flatMap(picture -> Stream.of(picture.getUrl(), picture.getThumbnailUrl()))
+                .filter(StrUtil::isNotBlank)
+                .toList();
+        if(CollUtil.isNotEmpty(picturePathList)){
+            for(String picPath : picturePathList){
+                cosManager.deleteObj(picPath);
+            }
+        }
+        List<Long> pictureIds = pictureList.stream()
+                .map(Picture::getId)
+                .toList();
+        boolean picturesRemoved = pictureService.removeByIds(pictureIds);
+        if(!picturesRemoved){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "删除数据库图片记录失败");
+        }
+        return this.removeById(id);
+    }
+
+    @Override
+    public QueryWrapper<Space> getQueryWrapper(SpaceQueryRequest spaceQueryRequest) {
+        QueryWrapper<Space> queryWrapper = new QueryWrapper<>();
+
+        if(spaceQueryRequest == null){
+            return queryWrapper;
+        }
+
+        Long id = spaceQueryRequest.getId();
+        Long userId = spaceQueryRequest.getUserId();
+        String spaceName = spaceQueryRequest.getSpaceName();
+        Integer spaceLevel = spaceQueryRequest.getSpaceLevel();
+        queryWrapper.eq(ObjUtil.isNotEmpty(id),"Id", id);
+        queryWrapper.eq(ObjUtil.isNotEmpty(userId),"userId", userId);
+        queryWrapper.like(StrUtil.isNotBlank(spaceName), "spaceName", spaceName);
+        queryWrapper.eq(ObjUtil.isNotEmpty(spaceLevel),"spaceLevel", spaceLevel);
+        return queryWrapper;
+    }
+
+    @Override
+    public Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage) {
+        List<Space> spaceList = spacePage.getRecords();
+        Page<SpaceVO> spaceVOPage = new Page<>(spacePage.getCurrent(), spacePage.getSize(), spacePage.getTotal());
+        if (CollUtil.isEmpty(spaceList)) {
+            return spaceVOPage;
+        }
+        // 1. 关联查询用户信息，先收集所有不重复的 userId
+        Set<Long> userIdSet = spaceList.stream()
+            .map(Space::getUserId)
+            .collect(Collectors.toSet());
+        // 2. 使用 listByIds 一次性查询所有相关的用户
+        Map<Long, User> userIdUserMap = userService.listByIds(userIdSet).stream()
+            .collect(Collectors.toMap(User::getId, user -> user));
+
+        // 3. 遍历 spaceList，从 Map 中获取用户信息并组装 VO
+        List<SpaceVO> spaceVOList = spaceList.stream().map(space -> {
+            SpaceVO spaceVO = SpaceVO.objToVo(space);
+            User user = userIdUserMap.get(space.getUserId());
+            spaceVO.setUser(userService.getUserVO(user));
+            return spaceVO;
+        }).collect(Collectors.toList());
+        spaceVOPage.setRecords(spaceVOList);
+        return spaceVOPage;
     }
 }
 

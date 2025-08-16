@@ -30,10 +30,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -208,6 +205,18 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
         }).collect(Collectors.toList());
         spaceVOPage.setRecords(spaceVOList);
         return spaceVOPage;
+    }
+
+    @Override
+    public void checkSpaceAuth(User loginUser, Space oldSpace) {
+        Long spaceId = oldSpace.getId();
+        ThrowUtils.throwIf(spaceId == null, ErrorCode.PARAMS_ERROR);
+        Long userId = loginUser.getId();
+        ThrowUtils.throwIf(userId == null, ErrorCode.NOT_LOGIN_ERROR);
+
+        if(!Objects.equals(oldSpace.getUserId(), userId) && !userService.isAdmin(loginUser)){
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限");
+        }
     }
 }
 

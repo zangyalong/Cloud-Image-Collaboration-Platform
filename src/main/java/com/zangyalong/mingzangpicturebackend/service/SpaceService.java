@@ -30,4 +30,5 @@ public interface SpaceService extends IService<Space> {
 
     Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage);
 
+    void checkSpaceAuth(User loginUser, Space oldSpace);
 }

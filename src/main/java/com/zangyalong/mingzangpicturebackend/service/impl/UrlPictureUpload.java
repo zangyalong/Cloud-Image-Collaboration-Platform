@@ -29,6 +29,12 @@ public class UrlPictureUpload extends PictureUploadTemplate {
         String fileUrl = (String)inputSource;
         ThrowUtils.throwIf(StrUtil.isBlank(fileUrl), ErrorCode.PARAMS_ERROR, "文件地址不能为空");
 
+        int queryIndex = fileUrl.indexOf("?");
+        if (queryIndex != -1) {
+            // 如果存在查询参数，截取文件名部分
+            fileUrl = fileUrl.substring(0, queryIndex);
+        }
+
         // 1. 验证 URL 格式
         try {
             new URL(fileUrl);
@@ -47,15 +53,16 @@ public class UrlPictureUpload extends PictureUploadTemplate {
             response = HttpUtil.createRequest(Method.HEAD, fileUrl).execute();
             // 未正常返回，无需执行其他判断
             if(response.getStatus() != HttpStatus.HTTP_OK){
-                return;
+                log.warn("发送 HEAD 请求验证文件是否存在,但是返回状态码不是200");
             }
 
             // 4. 校验文件类型
             String contentType = response.header("Content-Type");
             if(StrUtil.isNotBlank(contentType)){
                 final List<String> ALLOW_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/webp");
-                ThrowUtils.throwIf(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase()),
-                        ErrorCode.PARAMS_ERROR, "文件类型错误");
+                if(!ALLOW_CONTENT_TYPES.contains(contentType.toLowerCase())){
+                    log.warn("文件类型错误");
+                }
             }
 
             // 5. 校验文件大小

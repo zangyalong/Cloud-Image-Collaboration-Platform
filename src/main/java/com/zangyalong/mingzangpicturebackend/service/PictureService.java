@@ -2,6 +2,7 @@ package com.zangyalong.mingzangpicturebackend.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zangyalong.mingzangpicturebackend.api.aliyunai.CreateOutPaintingTaskResponse;
 import com.zangyalong.mingzangpicturebackend.common.BaseResponse;
 import com.zangyalong.mingzangpicturebackend.model.dto.picture.*;
 import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
@@ -107,4 +108,7 @@ public interface PictureService extends IService<Picture> {
     public List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
 
     public void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
+
+    public CreateOutPaintingTaskResponse createPictureOutPaintingTask
+            (CreatePictureOutPaintingTaskRequest createPictureOutPaintingTaskRequest, User loginUser);
 }

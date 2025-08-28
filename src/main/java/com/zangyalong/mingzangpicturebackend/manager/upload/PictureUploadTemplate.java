@@ -44,6 +44,11 @@ public abstract class PictureUploadTemplate {
         String originFileName = getOriginFileName(inputSource);
         String uploadFileName = String.format("%s_%s.%s", DateUtil.formatDate(new Date()), uuid,
                 FileUtil.getSuffix(originFileName));
+        int queryIndex2 = uploadFileName.indexOf("?");
+        if (queryIndex2 != -1) {
+            // 如果存在查询参数，截取文件名部分
+            uploadFileName = uploadFileName.substring(0, queryIndex2);
+        }
         String uploadPath = String.format("/%s/%s", uploadPathPrefix, uploadFileName);
 
         File file = null;

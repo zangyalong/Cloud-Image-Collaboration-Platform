@@ -12,11 +12,6 @@ spring:
     store-type: redis
     # session 30 天过期
     timeout: 30d
-  redis:
-    database: 2
-    host: 127.0.0.1
-    port: 6379
-    connect-timeout: 5s
   application:
     name: mingzang-picture-backend
   profiles:
@@ -24,14 +19,18 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB        # 单个文件最大50MB
-
-
   # 数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mz_picture?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: z200209255
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 5s
+      database: 1
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -56,4 +55,5 @@ knife4j:
         # 规则资源：指定要扫描的包路径
         api-rule-resources:
           - com.zangyalong.mingzangpicturebackend.controller
+
 

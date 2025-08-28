@@ -103,4 +103,8 @@ public interface PictureService extends IService<Picture> {
     /**
      * Todo Spr؜ing Scheduler 定时任务实现定时清理图片
      */
+
+    public List<PictureVO> searchPictureByColor(Long spaceId, String picColor, User loginUser);
+
+    public void editPictureByBatch(PictureEditByBatchRequest pictureEditByBatchRequest, User loginUser);
 }

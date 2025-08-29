@@ -1,9 +1,8 @@
-package com.zangyalong.mingzangpicturebackend.service.impl;
+package com.zangyalong.mingzangpicturebackend.manager.upload;
 
 import cn.hutool.core.io.FileUtil;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
-import com.zangyalong.mingzangpicturebackend.manager.upload.PictureUploadTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

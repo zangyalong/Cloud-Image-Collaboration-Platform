@@ -25,12 +25,76 @@ spring:
     url: jdbc:mysql://localhost:3306/mz_picture?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
     password: z200209255
+#    hikari:
+#      # 为ShardingSphere配置连接池
+#      maximum-pool-size: 20
+#      minimum-idle: 5
   data:
     redis:
       host: 127.0.0.1
       port: 6379
       connect-timeout: 5s
       database: 0
+
+  # 空间图片分表
+  shardingsphere:
+    datasource:
+      names: ds0
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/mz_picture
+        username: root
+        password: z200209255
+    rules:
+      sharding:
+        tables:
+          picture:
+            actual-data-nodes: mz_picture.picture # 动态分表
+            table-strategy:
+              standard:
+                sharding-column: spaceId
+                sharding-algorithm-name: picture_sharding_algorithm  # 使用自定义分片算法
+        sharding-algorithms:
+          picture_sharding_algorithm:
+            type: CLASS_BASED
+            props:
+              strategy: standard
+              algorithmClassName: com.zangyalong.mingzangpicturebackend.manager.sharding.PictureShardingAlgorithm
+    props:
+      sql-show: true
+#  # 空间图片分表
+#  shardingsphere:
+#    datasource:
+#      names: mz_picture
+#      hikari:
+#      # 为ShardingSphere配置连接池
+#        maximum-pool-size: 20
+#        minimum-idle: 5
+#      mz_picture:
+#        type: com.zaxxer.hikari.HikariDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://localhost:3306/mz_picture?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+#        username: root
+#        password: z200209255
+#    rules:
+#      sharding:
+#        tables:
+#          picture:
+#            actual-data-nodes: mz_picture.picture  # 动态分表
+#            table-strategy:
+#              standard:
+#                sharding-column: spaceId
+#                sharding-algorithm-name: picture_sharding_algorithm  # 使用自定义分片算法
+#        sharding-algorithms:
+#          picture_sharding_algorithm:
+#            type: CLASS_BASED
+#            props:
+#              strategy: standard
+#              algorithmClassName: com.zangyalong.mingzangpicturebackend.manager.sharding.PictureShardingAlgorithm
+#    props:
+#      sql-show: true
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false
@@ -41,6 +105,7 @@ mybatis-plus:
       logic-delete-field: isDelete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+    enable-sql-runner: true
 # 接口文档配置
 knife4j:
   enable: true
@@ -55,5 +120,3 @@ knife4j:
         # 规则资源：指定要扫描的包路径
         api-rule-resources:
           - com.zangyalong.mingzangpicturebackend.controller
-
-

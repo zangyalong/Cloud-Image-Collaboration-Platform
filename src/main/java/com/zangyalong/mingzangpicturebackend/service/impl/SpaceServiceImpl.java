@@ -12,6 +12,7 @@ import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
 import com.zangyalong.mingzangpicturebackend.manager.CosManager;
+import com.zangyalong.mingzangpicturebackend.manager.sharding.DynamicShardingManager;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceAddRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceQueryRequest;
 import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
@@ -64,6 +65,10 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     @Resource
     @Lazy
     private SpaceUserService spaceUserService;
+
+    @Lazy
+    @Resource
+    private DynamicShardingManager dynamicShardingManager;
 
     @Override
     public void validSpace(Space space, boolean add) {
@@ -163,6 +168,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                     result = spaceUserService.save(spaceUser);
                     ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR, "创建团队成员记录失败");
                 }
+
+                // 创建分表,内部自行判断是否创建，调用即可
+                dynamicShardingManager.createSpacePictureTable(space);
 
                 return space.getId();
             });

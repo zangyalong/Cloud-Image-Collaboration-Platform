@@ -3,6 +3,8 @@ package com.zangyalong.mingzangpicturebackend.controller;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -203,7 +205,13 @@ public class PictureController {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
 
-        pictureService.deletePicture(id, loginUser);
+        Long spaceId = oldPicture.getSpaceId();
+        // 构造 QueryWrapper
+        QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", id)         // 指定主键 ID
+                .eq("spaceId", spaceId); // 附加 spaceId 条件
+
+        pictureService.remove(queryWrapper);
 
         return ResultUtils.success(true);
     }
@@ -235,8 +243,14 @@ public class PictureController {
         User loginUser = userService.getLoginUser(request);
         pictureService.fillReviewParams(picture, loginUser);
 
+        Long spaceId = oldPicture.getSpaceId();
+        // 构造 UpdateWrapper
+        UpdateWrapper<Picture> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", picture.getId()) // 指定主键条件，批量更新则使用 in 传递多条
+                .eq("spaceId", spaceId);      // 补充条件 spaceId=xxx
+
         // 操作数据库
-        boolean result = pictureService.updateById(picture);
+        boolean result = pictureService.update(picture, updateWrapper);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
@@ -265,6 +279,9 @@ public class PictureController {
         Picture picture = pictureService.getById(id);
         ThrowUtils.throwIf(picture == null, ErrorCode.NOT_FOUND_ERROR);
 
+        // 构造 QueryWrapper
+        QueryWrapper<Picture> queryWrapper = new QueryWrapper<>();
+
         // 空间模块新增： 空间权限校验
         Space space = null;
         Long spaceId = picture.getSpaceId();
@@ -277,6 +294,11 @@ public class PictureController {
             space = spaceService.getById(spaceId);
             ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
         }
+
+        queryWrapper.eq("id", id)         // 根据主键 id 查询
+                .eq("spaceId", spaceId); // 附加 spaceId 条件
+        // 执行查询
+        picture = pictureService.getOne(queryWrapper);
 
         // 获取权限列表
         User loginUser = userService.getLoginUser(request);
@@ -332,6 +354,7 @@ public class PictureController {
         // 普通用户默认只能查看已过审的数据
         //pictureQueryRequest.setReviewStatus(PictureReviewStatusEnum.PASS.getValue());
 
+
         Page<Picture> picturePage = pictureService.page(new Page<>(current, size),
                 pictureService.getQueryWrapper(pictureQueryRequest));
         // 获取封装类
@@ -368,8 +391,14 @@ public class PictureController {
 
         pictureService.fillReviewParams(picture, loginUser);
 
+        Long spaceId = oldPicture.getSpaceId();
+        // 构造 UpdateWrapper
+        UpdateWrapper<Picture> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", picture.getId()) // 指定主键条件，批量更新则使用 in 传递多条
+                .eq("spaceId", spaceId);      // 补充条件 spaceId=xxx
+
         // 操作数据库
-        boolean result = pictureService.updateById(picture);
+        boolean result = pictureService.update(picture, updateWrapper);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }

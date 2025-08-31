@@ -188,12 +188,17 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
         fillReviewParams(picture, loginUser);
 
+        // 补充空间 id，默认为 0
+        if (spaceId == null) {
+            picture.setSpaceId(0L);
+        }
+
         if(pictureId != null){
             picture.setId(pictureId);
             picture.setEditTime(new Date());
         }
 
-        //开始事务
+        // 开始事务
         Long finalSpaceId = spaceId;
         transactionTemplate.execute(status -> {
             Picture oldPicture = null;
@@ -291,7 +296,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture>
 
         // 空间模块新增
         queryWrapper.eq(ObjUtil.isNotEmpty(spaceId), "spaceId", spaceId);
-        queryWrapper.isNull(nullSpaceId, "spaceId");
+        queryWrapper.eq(nullSpaceId, "spaceId", 0);
+        // queryWrapper.isNull(nullSpaceId, "spaceId");
 
         // JSON 数组查询
         if (CollUtil.isNotEmpty(tags)) {

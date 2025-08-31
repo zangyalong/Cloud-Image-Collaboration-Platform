@@ -66,9 +66,9 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
     @Lazy
     private SpaceUserService spaceUserService;
 
-    @Lazy
-    @Resource
-    private DynamicShardingManager dynamicShardingManager;
+//    @Lazy
+//    @Resource
+//    private DynamicShardingManager dynamicShardingManager;
 
     @Override
     public void validSpace(Space space, boolean add) {
@@ -170,7 +170,7 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space>
                 }
 
                 // 创建分表,内部自行判断是否创建，调用即可
-                dynamicShardingManager.createSpacePictureTable(space);
+                // dynamicShardingManager.createSpacePictureTable(space);
 
                 return space.getId();
             });

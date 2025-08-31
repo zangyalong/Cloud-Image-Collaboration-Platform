@@ -7,7 +7,7 @@ import com.zangyalong.mingzangpicturebackend.model.entity.SpaceUser;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.vo.SpaceUserVO;
 import com.zangyalong.mingzangpicturebackend.model.vo.SpaceVO;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 

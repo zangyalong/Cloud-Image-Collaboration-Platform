@@ -16,7 +16,7 @@ import com.zangyalong.mingzangpicturebackend.model.vo.LoginUserVO;
 import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
 import com.zangyalong.mingzangpicturebackend.mapper.UserMapper;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

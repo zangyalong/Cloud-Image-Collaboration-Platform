@@ -53,7 +53,6 @@ public class SpaceUser implements Serializable {
      */
     private Integer isDelete;
 
-    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

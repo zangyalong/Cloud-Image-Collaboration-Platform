@@ -6,7 +6,7 @@ import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.vo.LoginUserVO;
 import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.List;
 

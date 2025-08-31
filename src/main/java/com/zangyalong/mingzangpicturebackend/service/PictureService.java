@@ -9,11 +9,12 @@ import com.zangyalong.mingzangpicturebackend.model.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.vo.PictureVO;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -40,12 +41,15 @@ public interface PictureService extends IService<Picture> {
 
     PictureVO getPictureVO(Picture picture, HttpServletRequest request);
 
+
     void fillReviewParams(Picture picture, User loginUser);
 
     /**
      * 分页获取图片封装
      */
     Page<PictureVO> getPictureVOPage(Page<Picture> picturePage, HttpServletRequest request);
+
+
 
     /**
      * 图片数据校验

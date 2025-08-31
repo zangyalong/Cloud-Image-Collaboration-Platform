@@ -34,7 +34,6 @@ public class PictureEditRequest implements Serializable {
      */
     private List<String> tags;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

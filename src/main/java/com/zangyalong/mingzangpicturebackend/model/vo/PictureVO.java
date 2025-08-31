@@ -109,7 +109,7 @@ public class PictureVO implements Serializable {
      */
     private String picColor;
 
-    @Serial
+
     private static final long serialVersionUID = 1L;
 
     /**

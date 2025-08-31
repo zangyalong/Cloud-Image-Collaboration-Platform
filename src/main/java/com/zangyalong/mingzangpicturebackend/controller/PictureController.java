@@ -39,9 +39,9 @@ import com.zangyalong.mingzangpicturebackend.model.vo.PictureVO;
 import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.util.DigestUtils;
@@ -291,12 +291,18 @@ public class PictureController {
             boolean hasPermission = StpKit.SPACE.hasPermission(SpaceUserPermissionConstant.PICTURE_VIEW);
             ThrowUtils.throwIf(!hasPermission, ErrorCode.NO_AUTH_ERROR);
 
-            space = spaceService.getById(spaceId);
-            ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+            // 仅当 spaceId 不为 null 且大于 0 时才获取空间信息
+            if (spaceId != null && spaceId > 0) {
+                space = spaceService.getById(spaceId);
+                ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+            }
         }
 
-        queryWrapper.eq("id", id)         // 根据主键 id 查询
-                .eq("spaceId", spaceId); // 附加 spaceId 条件
+        queryWrapper.eq("id", id); // 根据主键 id 查询
+        // 仅当 spaceId 不为 null 时才添加 spaceId 条件
+        if (spaceId != null) {
+            queryWrapper.eq("spaceId", spaceId); // 附加 spaceId 条件
+        }
         // 执行查询
         picture = pictureService.getOne(queryWrapper);
 

@@ -38,7 +38,6 @@ public class SpaceUsageAnalyzeResponse implements Serializable {
      */
     private Double countUsageRatio;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

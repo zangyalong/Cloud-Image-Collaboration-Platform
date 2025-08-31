@@ -17,7 +17,7 @@ import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
 import com.zangyalong.mingzangpicturebackend.model.dto.file.UploadPictureResult;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

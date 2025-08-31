@@ -13,7 +13,6 @@ public class SearchPictureByPictureRequest implements Serializable {
      */
     private Long pictureId;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

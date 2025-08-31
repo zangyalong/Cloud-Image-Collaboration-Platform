@@ -81,7 +81,6 @@ public class Space implements Serializable {
      */
     private Integer spaceType;
 
-    @Serial
     @TableField
     private static final long serialVersionUID = 1L;
 }

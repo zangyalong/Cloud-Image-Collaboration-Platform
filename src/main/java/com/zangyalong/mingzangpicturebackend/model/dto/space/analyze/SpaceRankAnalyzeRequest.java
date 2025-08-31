@@ -13,7 +13,6 @@ public class SpaceRankAnalyzeRequest implements Serializable {
      */
     private Integer topN = 10;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

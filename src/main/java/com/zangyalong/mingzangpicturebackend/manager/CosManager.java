@@ -9,7 +9,7 @@ import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.qcloud.cos.model.ciModel.persistence.PicOperations;
 import com.zangyalong.mingzangpicturebackend.config.CosClientConfig;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 import java.io.File;
 import java.util.ArrayList;

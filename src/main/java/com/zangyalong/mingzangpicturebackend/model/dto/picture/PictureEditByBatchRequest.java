@@ -34,7 +34,6 @@ public class PictureEditByBatchRequest implements Serializable {
      */
     private String nameRule;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

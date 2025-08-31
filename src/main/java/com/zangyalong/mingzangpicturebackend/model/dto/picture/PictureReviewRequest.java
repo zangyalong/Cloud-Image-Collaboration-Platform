@@ -23,8 +23,6 @@ public class PictureReviewRequest implements Serializable {
      */
     private String reviewMessage;
 
-
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

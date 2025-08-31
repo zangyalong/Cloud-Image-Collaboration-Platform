@@ -2,14 +2,12 @@ package com.zangyalong.mingzangpicturebackend.config;
 
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import jakarta.servlet.Filter;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
 
 import java.io.IOException;
 

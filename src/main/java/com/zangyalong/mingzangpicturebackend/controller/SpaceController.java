@@ -29,8 +29,8 @@ import com.zangyalong.mingzangpicturebackend.model.vo.UserVO;
 import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 

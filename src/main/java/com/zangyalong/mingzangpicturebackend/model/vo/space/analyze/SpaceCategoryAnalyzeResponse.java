@@ -27,7 +27,6 @@ public class SpaceCategoryAnalyzeResponse implements Serializable {
      */
     private Long totalSize;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

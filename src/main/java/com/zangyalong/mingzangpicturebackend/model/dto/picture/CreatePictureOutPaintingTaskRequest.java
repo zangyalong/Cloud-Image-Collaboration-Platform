@@ -19,7 +19,6 @@ public class CreatePictureOutPaintingTaskRequest implements Serializable {
      */
     private CreateOutPaintingTaskRequest.Parameters parameters;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

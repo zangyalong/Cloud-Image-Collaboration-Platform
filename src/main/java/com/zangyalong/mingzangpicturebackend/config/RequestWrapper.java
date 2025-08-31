@@ -1,9 +1,9 @@
 package com.zangyalong.mingzangpicturebackend.config;
 
-import jakarta.servlet.ReadListener;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 

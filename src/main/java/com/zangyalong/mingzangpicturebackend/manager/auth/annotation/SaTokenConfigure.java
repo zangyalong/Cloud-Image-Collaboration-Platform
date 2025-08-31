@@ -2,7 +2,7 @@ package com.zangyalong.mingzangpicturebackend.manager.auth.annotation;
 
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.strategy.SaAnnotationStrategy;
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

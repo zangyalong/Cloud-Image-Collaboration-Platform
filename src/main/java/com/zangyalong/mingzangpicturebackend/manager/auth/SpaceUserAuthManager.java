@@ -12,7 +12,7 @@ import com.zangyalong.mingzangpicturebackend.model.enums.SpaceRoleEnum;
 import com.zangyalong.mingzangpicturebackend.model.enums.SpaceTypeEnum;
 import com.zangyalong.mingzangpicturebackend.service.SpaceUserService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

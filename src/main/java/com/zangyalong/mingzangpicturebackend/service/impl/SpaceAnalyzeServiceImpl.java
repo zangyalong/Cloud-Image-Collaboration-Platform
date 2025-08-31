@@ -18,7 +18,7 @@ import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceAnalyzeService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
-import jakarta.annotation.Resource;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;

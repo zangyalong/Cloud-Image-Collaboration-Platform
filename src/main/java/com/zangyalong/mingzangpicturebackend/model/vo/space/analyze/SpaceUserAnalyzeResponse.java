@@ -22,7 +22,6 @@ public class SpaceUserAnalyzeResponse implements Serializable {
      */
     private Long count;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

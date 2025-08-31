@@ -23,7 +23,6 @@ public class SpaceAnalyzeRequest implements Serializable {
      */
     private boolean queryAll;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

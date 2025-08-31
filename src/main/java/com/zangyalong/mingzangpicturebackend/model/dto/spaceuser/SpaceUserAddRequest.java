@@ -23,7 +23,6 @@ public class SpaceUserAddRequest implements Serializable {
      */
     private String spaceRole;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

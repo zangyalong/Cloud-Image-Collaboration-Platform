@@ -33,7 +33,6 @@ public class SpaceUpdateRequest implements Serializable {
      */
     private Long maxCount;
 
-    @Serial
     private static final long serialVersionUID = 1L;
 }
 

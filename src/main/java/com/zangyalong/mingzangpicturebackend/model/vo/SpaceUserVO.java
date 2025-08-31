@@ -52,7 +52,7 @@ public class SpaceUserVO implements Serializable {
      */
     private SpaceVO space;
 
-    @Serial
+
     private static final long serialVersionUID = 1L;
 
     /**

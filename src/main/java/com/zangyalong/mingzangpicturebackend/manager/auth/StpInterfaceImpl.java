@@ -6,6 +6,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import cn.hutool.http.ContentType;
 import cn.hutool.http.Header;
 import cn.hutool.json.JSONUtil;
@@ -23,8 +24,8 @@ import com.zangyalong.mingzangpicturebackend.service.PictureService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceService;
 import com.zangyalong.mingzangpicturebackend.service.SpaceUserService;
 import com.zangyalong.mingzangpicturebackend.service.UserService;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -130,12 +131,35 @@ public class StpInterfaceImpl implements StpInterface {
             }
         }
         // 获取 Space 对象
-        Space space = spaceService.getById(spaceId);
-        if (space == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "未找到空间信息");
+        Space space = null;
+        if (spaceId != null && spaceId > 0) {
+            space = spaceService.getById(spaceId);
+            if (space == null) {
+                throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "未找到空间信息");
+            }
         }
+        // 如果 spaceId 为 null 或 0，表示是公共图库，space 保持为 null
         // 根据 Space 类型判断权限
-        if (space.getSpaceType() == SpaceTypeEnum.PRIVATE.getValue()) {
+        if (space == null) {
+            // 公共图库，仅本人或管理员可操作
+            // 从 authContext 获取 pictureId
+            Long pictureId = authContext.getPictureId();
+            if (pictureId != null) {
+                Picture picture = pictureService.lambdaQuery()
+                        .eq(Picture::getId, pictureId)
+                        .select(Picture::getId, Picture::getUserId)
+                        .one();
+                if (picture != null && (picture.getUserId().equals(userId) || userService.isAdmin(loginUser))) {
+                    return ADMIN_PERMISSIONS;
+                } else {
+                    // 不是自己的图片，仅可查看
+                    return Collections.singletonList(SpaceUserPermissionConstant.PICTURE_VIEW);
+                }
+            } else {
+                // 如果没有 pictureId，返回空权限列表
+                return new ArrayList<>();
+            }
+        } else if (space.getSpaceType() == SpaceTypeEnum.PRIVATE.getValue()) {
             // 私有空间，仅本人或管理员有权限
             if (space.getUserId().equals(userId) || userService.isAdmin(loginUser)) {
                 return ADMIN_PERMISSIONS;
@@ -184,10 +208,10 @@ public class StpInterfaceImpl implements StpInterface {
         SpaceUserAuthContext authRequest;
         // 兼容 get 和 post 操作
         if (ContentType.JSON.getValue().equals(contentType)) {
-            String body = JakartaServletUtil.getBody(request);
+            String body = ServletUtil.getBody(request);
             authRequest = JSONUtil.toBean(body, SpaceUserAuthContext.class);
         } else {
-            Map<String, String> paramMap = JakartaServletUtil.getParamMap(request);
+            Map<String, String> paramMap = ServletUtil.getParamMap(request);
             authRequest = BeanUtil.toBean(paramMap, SpaceUserAuthContext.class);
         }
         // 根据请求路径区分 id 字段的含义

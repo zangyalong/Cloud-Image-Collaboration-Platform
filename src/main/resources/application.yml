@@ -30,7 +30,7 @@ spring:
       host: 127.0.0.1
       port: 6379
       connect-timeout: 5s
-      database: 1
+      database: 0
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

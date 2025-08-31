@@ -10,6 +10,7 @@ import com.zangyalong.mingzangpicturebackend.model.entity.Space;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zangyalong.mingzangpicturebackend.model.entity.User;
 import com.zangyalong.mingzangpicturebackend.model.vo.SpaceVO;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
 * @author mingzang
@@ -31,4 +32,8 @@ public interface SpaceService extends IService<Space> {
     Page<SpaceVO> getSpaceVOPage(Page<Space> spacePage);
 
     void checkSpaceAuth(User loginUser, Space oldSpace);
+
+    SpaceVO getSpaceVO(Space space, HttpServletRequest request);
+
+
 }

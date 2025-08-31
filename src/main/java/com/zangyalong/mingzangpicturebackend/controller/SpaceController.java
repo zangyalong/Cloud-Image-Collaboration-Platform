@@ -11,6 +11,8 @@ import com.zangyalong.mingzangpicturebackend.constant.UserConstant;
 import com.zangyalong.mingzangpicturebackend.exception.BusinessException;
 import com.zangyalong.mingzangpicturebackend.exception.ErrorCode;
 import com.zangyalong.mingzangpicturebackend.exception.ThrowUtils;
+import com.zangyalong.mingzangpicturebackend.manager.auth.SpaceUserAuthContext;
+import com.zangyalong.mingzangpicturebackend.manager.auth.SpaceUserAuthManager;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceAddRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceEditRequest;
 import com.zangyalong.mingzangpicturebackend.model.dto.space.SpaceQueryRequest;
@@ -47,6 +49,9 @@ public class SpaceController {
 
     @Resource
     private PictureService pictureService;
+
+    @Resource
+    private SpaceUserAuthManager spaceUserAuthManager;
 
     @PostMapping("/update")
     @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
@@ -186,14 +191,20 @@ public class SpaceController {
     }
 
     @GetMapping("/get/vo")
-    public BaseResponse<SpaceVO> getSpaceVOById(@RequestParam Long id) {
+    public BaseResponse<SpaceVO> getSpaceVOById(@RequestParam Long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
         Space space = spaceService.getById(id);
+        ThrowUtils.throwIf(space == null, ErrorCode.NOT_FOUND_ERROR);
+
         SpaceVO spaceVO = new SpaceVO();
         BeanUtils.copyProperties(space, spaceVO);
 
-        User user = userService.getById(space.getUserId());
+        User loginUser = userService.getLoginUser(request);
+        List<String> permissionList = spaceUserAuthManager.getPermissionList(space, loginUser);
+        spaceVO.setPermissionList(permissionList);
+
         UserVO userVO = new UserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanUtils.copyProperties(loginUser, userVO);
         spaceVO.setUser(userVO);
 
         return ResultUtils.success(spaceVO);

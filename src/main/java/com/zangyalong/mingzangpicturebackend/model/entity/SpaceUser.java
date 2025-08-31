@@ -20,7 +20,7 @@ public class SpaceUser implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -36,7 +36,7 @@ public class SpaceUser implements Serializable {
     /**
      * 用户角色: owner, admin, member
      */
-    private String role;
+    private String spaceRole;
 
     /**
      * 创建时间

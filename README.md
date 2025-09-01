@@ -159,3 +159,11 @@
     1、使用主流的分库分表框架 Apache ShardingSphere
     2、通过降级SpringBoot版本实现，3.X版本可能太高，导致获取的dataSource.getConnection()不符合
     3、动态分表，对所有旗舰版团队空间都实行分表策略
+
+## 第二十四次提交记录 - 12图片协同编辑
+
+
+    1、通过原生WebSocket（基于WebSocketHandler）实现实时协同编辑
+    2、同一个WebSocketSession的线程运行过多任务多导致高延迟、高资源占用率，
+    因此采用Disruptor队列框架代替WebSocketHandler中的生产者-消费者模型，实现高效的信息传递
+    

@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @EnableAsync
 @SpringBootApplication(exclude = {ShardingSphereAutoConfiguration.class})
-@MapperScan("com.zangyalong.mingzangpicturebackend.mapper")
+@MapperScan("com.zangyalong.mingzangpicturebackend.infrastructure.mapper")
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class MingzangPictureBackendApplication {
 

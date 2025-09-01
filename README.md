@@ -166,4 +166,9 @@
     1、通过原生WebSocket（基于WebSocketHandler）实现实时协同编辑
     2、同一个WebSocketSession的线程运行过多任务多导致高延迟、高资源占用率，
     因此采用Disruptor队列框架代替WebSocketHandler中的生产者-消费者模型，实现高效的信息传递
-    
+
+## 第二十五次提交记录 - 13 DDD项目重构
+
+1、通过DDD领域驱动设计思想来对原项目的MVC架构进行了重构，整体分为了interface、application、domain、infrastructure四层
+
+2、将图片的公共空间id设置为0，兼容动态分表机制（未开启），并对应修改了图片的增删改查机制

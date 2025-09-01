@@ -57,7 +57,7 @@ spring:
             type: CLASS_BASED
             props:
               strategy: standard
-              algorithmClassName: com.zangyalong.mingzangpicturebackend.manager.sharding.PictureShardingAlgorithm
+              algorithmClassName: com.zangyalong.mingzangpicturebackend.shared.sharding.PictureShardingAlgorithm
     props:
       sql-show: true
 
@@ -85,4 +85,4 @@ knife4j:
         api-rule: package
         # 规则资源：指定要扫描的包路径
         api-rule-resources:
-          - com.zangyalong.mingzangpicturebackend.controller
+          - com.zangyalong.mingzangpicturebackend.interfaces.controller

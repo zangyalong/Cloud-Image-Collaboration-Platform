@@ -411,7 +411,7 @@ public class PictureDomainServiceImpl implements PictureDomainService {
             queryWrapper.eq("id", pictureId)         // 指定主键 ID
                     .eq("spaceId", spaceId); // 附加 spaceId 条件
 
-            boolean result = pictureRepository.removeById(queryWrapper);
+            boolean result = pictureRepository.remove(queryWrapper);
             ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
             // 更新空间的使用额度，释放额度
             boolean update = spaceApplicationService.lambdaUpdate()

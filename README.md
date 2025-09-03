@@ -5,13 +5,17 @@
 这个平台的应用场景非常广泛，预期的核心功能可分为 4 大类
 
 1）所有用户都可以在平台公开上传和检索图片素材，快速找到需要的图片。可用作表情包网站、设计素材网站、壁纸网站等：
-
+![img.png](src/main/resources/static/pic/img.png)
+![img_7.png](src/main/resources/static/pic/img_7.png)
 2）管理员可以上传、审核和管理图片，并对系统内的图片进行分析：
-
+![img_1.png](src/main/resources/static/pic/img_1.png)
+![img_6.png](src/main/resources/static/pic/img_6.png)
 3）对于个人用户，可将图片上传至私有空间进行批量管理、检索、编辑和分析，用作个人网盘、个人相册、作品集等：
-
+![img_2.png](src/main/resources/static/pic/img_2.png)
+![img_5.png](src/main/resources/static/pic/img_5.png)
 4）对于企业，可开通团队空间并邀请成员，共享图片并 **实时协同编辑图片**，提高团队协作效率。可用于提供商业服务，如企业活动相册、企业内部素材库等：
-
+![img_3.png](src/main/resources/static/pic/img_3.png)
+![img_4.png](src/main/resources/static/pic/img_4.png)
 ## 第一次提交记录 - 1初始化
 
 1、初始化项目，整合了相关依赖
@@ -172,3 +176,6 @@
 1、通过DDD领域驱动设计思想来对原项目的MVC架构进行了重构，整体分为了interface、application、domain、infrastructure四层
 
 2、将图片的公共空间id设置为0，兼容动态分表机制（未开启），并对应修改了图片的增删改查机制
+
+## 第二十六次提交记录 - 14上线运行
+修复部分问题，添加生产配置，成功上线运行--Release0.0.1

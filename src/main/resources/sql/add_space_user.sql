@@ -10,3 +10,8 @@ CREATE TABLE space_user
     INDEX idx_spaceId (spaceId),
     INDEX idx_userId (userId)
 ) COMMENT '空间用户关系表';
+
+ALTER TABLE `space_user`
+    ADD (
+        isDelete   tinyint    DEFAULT 0   NOT NULL COMMENT '是否删除'
+    );

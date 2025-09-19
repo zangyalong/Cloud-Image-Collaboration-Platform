@@ -1,5 +1,7 @@
 ## 项目介绍
 
+项目体验地址：http://picture.mingzang.online/
+
 **前期的技术选型**：基于 Vue 3 + Spring Boot + COS + WebSocket 的 **企业级云端图库协作平台**。
 
 这个平台的应用场景非常广泛，预期的核心功能可分为 4 大类
